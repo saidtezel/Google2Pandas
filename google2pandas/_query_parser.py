@@ -42,7 +42,19 @@ class QueryParser(object):
         try:
             if (query['end_date'] is None) | (query['end_date'] == 'today'):
                 end_date = pd.datetime.today().strftime('%Y-%m-%d')
-                
+
+            elif query['end_date'][-7] == 'daysAgo':
+                sd = pd.datetime.today() + \
+                    pd.tseries.offsets.DateOffset(days=-int(query['end_date'][:-7]))
+                query['end_date'] = sd.strftime('%Y-%m-%d')
+
+            elif query['end_date'] == 'yesterday':
+                sd = pd.datetime.today() + pd.tseries.offsets.DateOffset(days=-1)
+                query['end_date'] = sd.strftime('%Y-%m-%d')
+
+            elif query['end_date'] == 'today':
+                query['end_date'] = pd.datetime.today().strftime('%Y-%m-%d')
+
             else:
                 query['end_date'] = pd.to_datetime(query['end_date']).strftime('%Y-%m-%d')
                 
